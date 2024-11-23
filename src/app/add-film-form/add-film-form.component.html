@@ -1,0 +1,30 @@
+<form [formGroup]="filmForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="name">Name:</label>
+    <input id="name" formControlName="name" type="text" required>
+  </div>
+  <div>
+    <label for="categoria">Category:</label>
+    <input id="categoria" formControlName="categoria" type="text">
+  </div>
+  <div>
+    <label for="actors">Actors:</label>
+    <mat-form-field>
+        <mat-select formControlName="actors" multiple>
+          <mat-option *ngFor="let actor of actors" [value]="actor.id">{{ actor.name }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <label for="image">Image:</label>
+    <input id="image" formControlName="image" type="file" accept=".png, .jpg, .jpeg" (change)="onFileSelected($event, 'image')" required>
+    <div *ngIf="selectedImage">
+        <img [src]="selectedImage" alt="Vista previa de la imagen" class="image-preview">
+    </div>
+</div>
+  <div>
+    <label for="video">Video:</label>
+    <input id="video" formControlName="video" type="file" (change)="onFileSelected($event, 'video')" accept=".mp4" required>
+  </div>
+  <button type="submit">Add Film</button>
+</form>

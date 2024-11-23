@@ -1,0 +1,51 @@
+<div class="container">
+    <header>
+        <h1>{{this.film.name}}</h1>
+    </header>
+    <main>
+        <section class="movie-display">
+            <video controls>
+                <source [src]="this.film.video" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+        </section>
+        <h2>Tags</h2>
+        <div *ngFor="let categoria of this.film.categoria" class="tags">
+            <span>{{ categoria }}</span>
+        </div>
+        <div *ngFor="let actor of this.film.actors" class = "tags">
+                <span>{{ actor.nombreActor }}</span>
+        </div>
+        <section class="comments-section">
+            <h2>Comentarios</h2>
+            <div class="comments-list">
+                <div class="comment">
+                    <div *ngFor="let comment of film.comments">
+                        <div class="comment-content">
+                            <p>{{ comment.username }}</p>
+                            
+                            <!-- Conditionally render either text or input field based on edit mode -->
+                             <form [formGroup]="editForm">
+                                <ng-container *ngIf="this.getCurrentState(comment.id) else displayMode">
+                                    <input type="text"formControlName="modifiedComment" [(ngModel)]="comment.opinion" class="edit-input" />
+                                </ng-container>
+                                <ng-template #displayMode>
+                                    <p>{{ comment.opinion }}</p>
+                                </ng-template>
+                             </form>
+                        </div>
+                        <div class="comment-actions">
+                            <button class="edit-btn" (click)="this.onEditButtonClicked(comment.id)">Editar</button>
+                            <button class="delete-btn" (click)="onDeleteComment(comment.id)">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <form class="comment-form" [formGroup]="form" (ngSubmit)="this.onPostComment()">
+                <textarea formControlName="comment" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
+                <button type="submit">Comentar</button>
+            </form>
+        </section>
+    </main>
+</div>

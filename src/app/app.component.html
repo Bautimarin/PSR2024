@@ -1,0 +1,25 @@
+<header>
+
+    <a (click)="this.onLogoClicked()" class="logo">
+        <i class='bx bxs-movie'></i>PrusciPlus
+    </a>
+    <div class="bx bx-menu" id="menu-icon"></div>
+
+    <!-- menu  -->
+    <ul class="navbar">
+        <li><a href="/home" class="home-active">Inicio</a></li>
+        <li><a href="/home#movies">Peliculas</a></li>
+        <li><a href="/home#coming">Estrenos</a></li>
+        <li><a href="/home#newsletter">Mail</a></li>
+        <div *ngIf="true">
+            <li><a [routerLink]="['/addfilm']"  routerLinkActive="active" ariaCurrentWhenActive="page" class="btn">agregar peliculas</a></li>
+        </div>
+    </ul>
+    <a [routerLink]="['/']"  routerLinkActive="active" ariaCurrentWhenActive="page" class="btn">Cambiar Cuenta</a>
+</header>
+
+      <router-outlet></router-outlet>
+      <div class="copyright">
+        <p>&#169; PrusciPlus All Right Reserved</p>
+      </div>
+      

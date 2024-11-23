@@ -1,0 +1,80 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies and fix vulnerabilities
+        run: |
+          npm install
+          npm install @angular/cli
+      - name: Install Google Chrome
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update -y
+          sudo apt-get install -y google-chrome-stable
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: |
+          npm install
+          npx ng test --watch=false --browsers=ChromeHeadlessNoSandbox
+  build:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build Angular project
+        run: |
+          npm install
+          npx ng build --configuration production
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist/
+          
+  docker_build:
+   runs-on: ubuntu-latest
+   needs: build
+   steps:
+   - name: Set up Docker
+     run: |
+       sudo apt-get update -y
+       sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common
+       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+       sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+       sudo apt-get update -y
+       sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   - name: Log in to Docker Hub
+     run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+   - name: Build Docker image
+     run: docker build -t ${{ secrets.DOCKER_IMAGE }}:${{ github.ref_name }} .
+
+   - name: Push Docker image
+     run: docker push ${{ secrets.DOCKER_IMAGE }}:${{ github.ref_name }}
