@@ -16,6 +16,9 @@
             "outputPath": "dist/app",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": ["path-browserify"],
+            "scripts": [],
+            "styles": []
             "polyfills": [
               "zone.js"
             ],
