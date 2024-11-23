@@ -1,6 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "path": ["./node_modules/path-browserify"]
+    }
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitAny": true,
@@ -27,6 +30,7 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
+    
     "lib": [
       "ES2022",
       "dom"
